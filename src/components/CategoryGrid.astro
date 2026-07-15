@@ -1,6 +1,6 @@
 ---
 import { Box, CodeXml, Cpu, Puzzle, Zap } from '@lucide/astro';
-import type { CategoryItem } from '../data/homeData';
+import type { CategoryItem } from '../data/memorials';
 
 interface Props {
   items: CategoryItem[];
@@ -14,7 +14,7 @@ const iconMap = { box: Box, zap: Zap, code: CodeXml, puzzle: Puzzle, cpu: Cpu };
   {items.map((item) => {
     const Icon = iconMap[item.icon];
     return (
-      <a class:list={['category-item', `tone-${item.tone}`]} href="#graveyard">
+      <a class:list={['category-item', `tone-${item.tone}`]} href={item.href}>
         <Icon size={38} stroke-width={1.7} />
         <span><strong>{item.name}</strong><small>{item.count}</small></span>
       </a>

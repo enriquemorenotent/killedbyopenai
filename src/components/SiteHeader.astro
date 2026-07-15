@@ -10,13 +10,13 @@ interface Props {
 const { active = 'home' } = Astro.props;
 const links = [
   { key: 'home', label: 'Home', href: withBase() },
-  { key: 'graveyard', label: 'Graveyard', href: withBase('#graveyard') },
-  { key: 'death-row', label: 'Death Row', href: withBase('#death-row') },
-  { key: 'timeline', label: 'Timeline', href: withBase('#death-row') },
-  { key: 'models', label: 'Model Cemetery', href: withBase('#categories') },
+  { key: 'graveyard', label: 'Graveyard', href: withBase('graveyard/') },
+  { key: 'death-row', label: 'Death Row', href: withBase('death-row/') },
+  { key: 'timeline', label: 'Timeline', href: withBase('timeline/') },
+  { key: 'models', label: 'Model Cemetery', href: withBase('models/') },
   { key: 'about', label: 'About', href: withBase('#about') },
 ] as const;
-const graveyardUrl = withBase('#graveyard');
+const graveyardUrl = withBase('graveyard/');
 ---
 
 <header class="site-header" data-site-header>

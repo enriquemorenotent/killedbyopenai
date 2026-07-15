@@ -1,0 +1,22 @@
+---
+import ArchiveGrid from '../../components/ArchiveGrid.astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { graveyardMemorials } from '../../data/memorials/selectors';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="The Graveyard — Killed by OpenAI" description="Source-backed records for OpenAI products, features, integrations, and APIs that were killed, retired, renamed, or absorbed.">
+  <SiteHeader active="graveyard" />
+  <main>
+    <ArchiveHero
+      eyebrow="Official-ish cemetery records"
+      title="The Graveyard"
+      summary="Products, features, integrations, and APIs with public paperwork. Models have their own overcrowded cemetery."
+      count={graveyardMemorials.length}
+    />
+    <ArchiveGrid items={graveyardMemorials} filterable />
+  </main>
+  <SiteFooter />
+</BaseLayout>

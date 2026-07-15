@@ -8,7 +8,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import StatusStrip from '../components/StatusStrip.astro';
 import TombstoneIcon from '../components/TombstoneIcon.astro';
-import { categories, recentMemorials, scheduledMemorials, statusMetrics } from '../data/homeData';
+import { categories, recentMemorials, scheduledMemorials, statusMetrics } from '../data/memorials/selectors';
 import { withBase } from '../utils/urls';
 
 const heroImage = withBase('images/openai-tombstone-hero.png');
@@ -33,10 +33,10 @@ const heroImage = withBase('images/openai-tombstone-hero.png');
           <span class="product-line">products OpenAI</span>
           <span class="final-line"><em>killed</em>.</span>
         </h1>
-        <p>OpenAI ships fast. Sometimes too fast.<br />Here lie the products, features, and APIs that<br />didn’t make it.</p>
+        <p>OpenAI ships fast. Sometimes too fast. <br />Here lie the products, features, and APIs that <br />didn’t make it.</p>
         <div class="hero-actions">
-          <a class="primary-action" href="#graveyard"><TombstoneIcon size={17} /> Browse the graveyard</a>
-          <a class="secondary-action" href="#death-row"><CalendarDays size={17} /> View death row</a>
+          <a class="primary-action" href={withBase('graveyard/')}><TombstoneIcon size={17} /> Browse the graveyard</a>
+          <a class="secondary-action" href={withBase('death-row/')}><CalendarDays size={17} /> View death row</a>
         </div>
       </div>
     </section>
@@ -48,7 +48,7 @@ const heroImage = withBase('images/openai-tombstone-hero.png');
     <section class="content-section site-shell" id="graveyard" aria-labelledby="recent-heading">
       <header class="section-heading">
         <h2 id="recent-heading"><TombstoneIcon size={21} /> Recently Deceased</h2>
-        <a href="#graveyard">View all killed products <ArrowRight size={16} /></a>
+        <a href={withBase('graveyard/')}>View every memorial <ArrowRight size={16} /></a>
       </header>
       <div class="memorial-grid">
         {recentMemorials.map((item) => <MemorialCard item={item} />)}
@@ -58,7 +58,7 @@ const heroImage = withBase('images/openai-tombstone-hero.png');
     <section class="content-section site-shell death-row-section" id="death-row" aria-labelledby="death-row-heading">
       <header class="section-heading tone-yellow">
         <h2 id="death-row-heading"><CalendarDays size={21} /> On Death Row</h2>
-        <a href="#death-row">View all scheduled <ArrowRight size={16} /></a>
+        <a href={withBase('death-row/')}>View all scheduled <ArrowRight size={16} /></a>
       </header>
       <DeathRowList items={scheduledMemorials} />
     </section>

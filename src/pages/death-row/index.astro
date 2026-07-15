@@ -1,0 +1,40 @@
+---
+import { CalendarDays } from '@lucide/astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import DeathRowList from '../../components/DeathRowList.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { scheduledMemorials } from '../../data/memorials/selectors';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Death Row — Killed by OpenAI" description="OpenAI products, APIs, and models with announced future shutdown or retirement dates.">
+  <SiteHeader active="death-row" />
+  <main>
+    <ArchiveHero
+      eyebrow="Alive, with paperwork pending"
+      title="Death Row"
+      summary="Announced shutdowns only. Nobody gets a headstone before the date on the notice."
+      count={scheduledMemorials.length}
+      countLabel="scheduled departures"
+      tone="yellow"
+    />
+    <section class="death-row-archive site-shell" aria-labelledby="scheduled-heading">
+      <header>
+        <h2 id="scheduled-heading"><CalendarDays size={21} /> Scheduled departures</h2>
+        <span>Dates checked July 15, 2026</span>
+      </header>
+      <DeathRowList items={scheduledMemorials} />
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .death-row-archive { padding-block: 46px 70px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 17px; }
+  h2 { display: flex; gap: 10px; align-items: center; margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -.025em; }
+  h2 :global(svg) { color: var(--yellow); }
+  header span { color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  @media (max-width: 600px) { header span { display: none; } }
+</style>

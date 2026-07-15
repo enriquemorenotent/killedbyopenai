@@ -1,0 +1,24 @@
+---
+import ArchiveGrid from '../../components/ArchiveGrid.astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { modelMemorials } from '../../data/memorials/selectors';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Model Cemetery — Killed by OpenAI" description="A grouped archive of OpenAI models retired from ChatGPT or the API, with the affected product surface made explicit.">
+  <SiteHeader active="models" />
+  <main>
+    <ArchiveHero
+      eyebrow="Version churn, respectfully grouped"
+      title="Model Cemetery"
+      summary="Every stone names the affected surface. Retired from ChatGPT does not automatically mean dead in the API."
+      count={modelMemorials.length}
+      countLabel="grouped records"
+      tone="pink"
+    />
+    <ArchiveGrid items={modelMemorials} heading="Grouped model records" />
+  </main>
+  <SiteFooter />
+</BaseLayout>

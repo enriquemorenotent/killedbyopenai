@@ -1,36 +1,37 @@
 ---
-import { AudioWaveform, BrainCircuit, CalendarDays, ChevronRight, Compass } from '@lucide/astro';
-import type { ScheduledItem } from '../data/homeData';
+import { AudioWaveform, BrainCircuit, CalendarDays, ChevronRight, CodeXml, Compass } from '@lucide/astro';
+import { formatEventDate, type MemorialRecord } from '../data/memorials';
+import { withBase } from '../utils/urls';
 
 interface Props {
-  items: ScheduledItem[];
+  items: MemorialRecord[];
 }
 
 const { items } = Astro.props;
-const iconMap = { compass: Compass, brain: BrainCircuit, wave: AudioWaveform };
+const iconMap = { compass: Compass, brain: BrainCircuit, wave: AudioWaveform, code: CodeXml };
 ---
 
 <div class="death-row-list">
   {items.map((item) => {
-    const Icon = iconMap[item.icon];
+    const Icon = iconMap[item.icon as keyof typeof iconMap] ?? BrainCircuit;
     return (
-      <article class:list={['death-row-item', `tone-${item.tone}`]}>
+      <a class:list={['death-row-item', `tone-${item.tone}`]} href={withBase(`projects/${item.slug}/`)}>
         <div class="identity">
           <span class="item-icon"><Icon size={27} stroke-width={1.6} /></span>
-          <div><h3>{item.name}</h3><p>{item.subtitle}</p></div>
+          <div><h3>{item.name}</h3><p>{item.subtitle ?? item.category}</p></div>
         </div>
-        <div class="date"><CalendarDays size={17} /><div><strong>{item.date}</strong><span>{item.event}</span></div></div>
-        <p class="note">{item.note}</p>
+        <div class="date"><CalendarDays size={17} /><div><strong>{formatEventDate(item.eventDate)}</strong><span>{item.eventLabel}</span></div></div>
+        <p class="note">{item.summary}</p>
         <span class="scheduled">Scheduled</span>
         <ChevronRight class="chevron" size={18} aria-hidden="true" />
-      </article>
+      </a>
     );
   })}
 </div>
 
 <style>
   .death-row-list { overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(145deg, rgba(17, 25, 33, .96), rgba(8, 14, 20, .96)); }
-  .death-row-item { display: grid; min-height: 67px; grid-template-columns: 1.4fr 1fr .95fr auto 20px; gap: 22px; align-items: center; padding: 8px 17px; border-bottom: 1px solid var(--line-soft); transition: background .2s ease; }
+  .death-row-item { display: grid; min-height: 67px; grid-template-columns: 1.4fr 1fr .95fr auto 20px; gap: 22px; align-items: center; padding: 8px 17px; border-bottom: 1px solid var(--line-soft); color: var(--text); text-decoration: none; transition: background .2s ease; }
   .death-row-item:last-child { border-bottom: 0; }
   .death-row-item:hover { background: rgba(255, 255, 255, .025); }
   .identity, .date { display: flex; gap: 13px; align-items: center; min-width: 0; }

@@ -1,38 +1,83 @@
 ---
-import { Bot, Heart, MessageCircle, Sparkles } from '@lucide/astro';
-import type { MemorialItem } from '../data/homeData';
+import {
+  Archive,
+  AudioWaveform,
+  Bot,
+  BrainCircuit,
+  CodeXml,
+  Compass,
+  Heart,
+  Layers,
+  MessageCircle,
+  PanelsTopLeft,
+  Puzzle,
+  Search,
+  Sparkles,
+  SquareTerminal,
+} from '@lucide/astro';
+import { formatEventDate, statusMeta, type MemorialRecord } from '../data/memorials';
+import { withBase } from '../utils/urls';
 
 interface Props {
-  item: MemorialItem;
+  item: MemorialRecord;
+  showEpitaph?: boolean;
 }
 
-const { item } = Astro.props;
-const iconMap = { sparkles: Sparkles, heart: Heart, message: MessageCircle, bot: Bot };
+const { item, showEpitaph = false } = Astro.props;
+const iconMap = {
+  archive: Archive,
+  bot: Bot,
+  brain: BrainCircuit,
+  browser: PanelsTopLeft,
+  code: CodeXml,
+  compass: Compass,
+  heart: Heart,
+  layers: Layers,
+  message: MessageCircle,
+  puzzle: Puzzle,
+  search: Search,
+  sparkles: Sparkles,
+  terminal: SquareTerminal,
+  wave: AudioWaveform,
+};
 const Icon = iconMap[item.icon];
+const status = statusMeta[item.status];
+const href = withBase(`projects/${item.slug}/`);
 ---
 
-<article class:list={['memorial-card', `tone-${item.tone}`, `icon-${item.icon}`]}>
-  <header><span>{item.status}</span><time>{item.date}</time></header>
+<a
+  class:list={['memorial-card', `tone-${item.tone}`, `status-${status.tone}`, `icon-${item.icon}`]}
+  href={href}
+  aria-label={`View the cemetery record for ${item.name}`}
+>
+  <header><span>{status.label}</span><time datetime={item.eventDate}>{formatEventDate(item.eventDate)}</time></header>
   <div class="memorial-icon"><Icon size={45} stroke-width={1.55} /></div>
   <h3>{item.name}</h3>
-  <p>{item.summary}</p>
+  <p class:list={{ epitaph: showEpitaph }}>{showEpitaph ? `“${item.epitaph}”` : item.summary}</p>
   <span class="category-tag">{item.category}</span>
-</article>
+</a>
 
 <style>
-  .memorial-card { display: flex; min-height: 270px; flex-direction: column; padding: 17px 16px 15px; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(150deg, rgba(18, 27, 35, .98), rgba(8, 14, 20, .98)); transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+  .memorial-card { display: flex; min-height: 270px; flex-direction: column; padding: 17px 16px 15px; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(150deg, rgba(18, 27, 35, .98), rgba(8, 14, 20, .98)); color: var(--text); text-decoration: none; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
   .memorial-card:hover { border-color: color-mix(in srgb, var(--tone) 55%, var(--line)); box-shadow: 0 15px 35px rgba(0, 0, 0, .22); transform: translateY(-4px); }
   header { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 10px; }
-  header span { color: var(--red); font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+  header span { color: var(--status-tone); font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+  .status-green { --status-tone: var(--green); }
+  .status-yellow { --status-tone: var(--yellow); }
+  .status-purple { --status-tone: var(--purple); }
+  .status-blue { --status-tone: var(--blue); }
+  .status-red { --status-tone: var(--red); }
+  .status-pink { --status-tone: var(--pink); }
   .memorial-icon { display: grid; width: 78px; height: 78px; place-items: center; margin: 17px auto 12px; border-radius: 22px; background: linear-gradient(145deg, #ecf0f2, #9ca5ac); color: #10171d; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
   .icon-sparkles .memorial-icon { border-radius: 48% 52% 47% 53% / 58% 47% 53% 42%; transform: rotate(-7deg); }
   .icon-sparkles .memorial-icon :global(svg) { transform: rotate(7deg); }
   .icon-message .memorial-icon { border: 0; background: transparent; color: #c9d0d5; box-shadow: none; }
   .icon-message .memorial-icon :global(svg) { width: 62px; height: 62px; stroke-width: 1.7; }
-  .icon-bot .memorial-icon { border: 3px solid #3c4750; background: rgba(13, 20, 27, .55); color: #c5ccd1; box-shadow: inset 0 0 24px rgba(255, 255, 255, .025); }
-  .icon-bot .memorial-icon :global(svg) { width: 37px; height: 37px; }
+  .icon-bot .memorial-icon, .icon-brain .memorial-icon, .icon-archive .memorial-icon { border: 3px solid #3c4750; background: rgba(13, 20, 27, .55); color: #c5ccd1; box-shadow: inset 0 0 24px rgba(255, 255, 255, .025); }
+  .icon-bot .memorial-icon :global(svg), .icon-brain .memorial-icon :global(svg), .icon-archive .memorial-icon :global(svg) { width: 37px; height: 37px; }
   h3 { margin: 0 0 9px; font-size: 17px; font-weight: 650; letter-spacing: -.015em; }
   p { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+  p.epitaph { color: #c8ced3; font-style: italic; }
   .category-tag { width: fit-content; margin-top: auto; padding: 4px 8px; border: 1px solid var(--tone); border-radius: 4px; color: var(--tone); font-size: 10px; }
   @media (max-width: 700px) {
     .memorial-card { min-width: 250px; min-height: 260px; scroll-snap-align: start; }

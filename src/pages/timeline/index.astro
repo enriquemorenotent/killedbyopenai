@@ -1,0 +1,65 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { formatEventDate, statusMeta } from '../../data/memorials';
+import { timelineMemorials } from '../../data/memorials/selectors';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../utils/urls';
+---
+
+<BaseLayout title="Timeline — Killed by OpenAI" description="A chronological ledger of OpenAI product, API, feature, and model retirements and scheduled shutdowns.">
+  <SiteHeader active="timeline" />
+  <main>
+    <ArchiveHero
+      eyebrow="A short history of moving fast"
+      title="Timeline"
+      summary="The newest notices first: deaths, replacements, resurrections, and appointments with the future."
+      count={timelineMemorials.length}
+      countLabel="dated events"
+      tone="blue"
+    />
+    <section class="timeline site-shell" aria-label="Cemetery timeline">
+      {timelineMemorials.map((item) => {
+        const status = statusMeta[item.status];
+        return (
+          <a class:list={['event', `tone-${status.tone}`]} href={withBase(`projects/${item.slug}/`)}>
+            <time datetime={item.eventDate}>{formatEventDate(item.eventDate)}</time>
+            <span class="marker" aria-hidden="true"></span>
+            <div>
+              <span class="status">{status.label}</span>
+              <h2>{item.name}</h2>
+              <p>{item.eventLabel}</p>
+            </div>
+            <ArrowUpRight size={17} aria-hidden="true" />
+          </a>
+        );
+      })}
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .timeline { padding-block: 42px 70px; }
+  .event { position: relative; display: grid; grid-template-columns: 128px 20px 1fr auto; gap: 18px; align-items: center; min-height: 92px; border-bottom: 1px solid var(--line-soft); color: var(--text); text-decoration: none; transition: background .2s ease; }
+  .event:hover { background: rgba(255, 255, 255, .018); }
+  time { color: var(--muted); font-size: 11px; }
+  .marker { position: relative; width: 10px; height: 10px; border: 2px solid var(--tone); border-radius: 50%; background: var(--bg); }
+  .marker::after { position: absolute; top: 8px; left: 2px; width: 2px; height: 84px; background: var(--line); content: ''; }
+  .event:last-child .marker::after { display: none; }
+  .status { color: var(--tone); font-size: 9px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+  h2 { margin: 5px 0 3px; font-size: 17px; font-weight: 650; letter-spacing: -.015em; }
+  p { margin: 0; color: var(--muted); font-size: 11px; }
+  .event > :global(svg) { color: var(--muted); transition: color .2s ease, transform .2s ease; }
+  .event:hover > :global(svg) { color: var(--tone); transform: translate(2px, -2px); }
+  @media (max-width: 580px) {
+    .event { grid-template-columns: 18px 1fr auto; gap: 13px; padding-block: 16px; }
+    time { grid-column: 2 / -1; grid-row: 1; }
+    .marker { grid-column: 1; grid-row: 1 / 3; }
+    .marker::after { height: 105px; }
+    .event div { grid-column: 2; grid-row: 2; }
+    .event > :global(svg) { grid-column: 3; grid-row: 2; }
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Killed by OpenAI',
+  description = 'A memorial to the products, features, APIs, and models that OpenAI retired, replaced, or left behind.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050a0f" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.88em%22 font-size=%2288%22>🪦</text></svg>" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --bg: #050a0f;
+    --surface: #0b1219;
+    --surface-2: #111a22;
+    --line: #2a3540;
+    --line-soft: #17212a;
+    --text: #f2f5f6;
+    --muted: #9ca6b0;
+    --green: #50df8a;
+    --green-deep: #269b5b;
+    --yellow: #f6c945;
+    --purple: #a978f2;
+    --blue: #4d9bf0;
+    --red: #ff626a;
+    --pink: #ed5c9b;
+    --sans: 'Archivo Variable', Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); color: var(--text); scroll-behavior: smooth; }
+  body {
+    min-width: 320px;
+    margin: 0;
+    overflow-x: hidden;
+    background:
+      radial-gradient(circle at 86% 13%, rgba(28, 49, 62, .18), transparent 27rem),
+      radial-gradient(circle at 8% 49%, rgba(21, 44, 57, .12), transparent 32rem),
+      var(--bg);
+    font-family: var(--sans);
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  button, input { font: inherit; }
+  img { display: block; max-width: 100%; }
+  ::selection { background: var(--green); color: #031008; }
+  :focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
+
+  .site-shell {
+    width: min(1120px, calc(100% - 112px));
+    margin-inline: auto;
+  }
+
+  .tone-green { --tone: var(--green); }
+  .tone-yellow { --tone: var(--yellow); }
+  .tone-purple { --tone: var(--purple); }
+  .tone-blue { --tone: var(--blue); }
+  .tone-red { --tone: var(--red); }
+  .tone-pink { --tone: var(--pink); }
+
+  @media (max-width: 860px) {
+    .site-shell { width: calc(100% - 40px); }
+  }
+
+  @media (max-width: 520px) {
+    .site-shell { width: calc(100% - 30px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      scroll-behavior: auto !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>

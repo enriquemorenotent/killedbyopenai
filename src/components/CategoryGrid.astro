@@ -1,0 +1,35 @@
+---
+import { Box, CodeXml, Cpu, Puzzle, Zap } from '@lucide/astro';
+import type { CategoryItem } from '../data/homeData';
+
+interface Props {
+  items: CategoryItem[];
+}
+
+const { items } = Astro.props;
+const iconMap = { box: Box, zap: Zap, code: CodeXml, puzzle: Puzzle, cpu: Cpu };
+---
+
+<div class="category-grid">
+  {items.map((item) => {
+    const Icon = iconMap[item.icon];
+    return (
+      <a class:list={['category-item', `tone-${item.tone}`]} href="#graveyard">
+        <Icon size={38} stroke-width={1.7} />
+        <span><strong>{item.name}</strong><small>{item.count}</small></span>
+      </a>
+    );
+  })}
+</div>
+
+<style>
+  .category-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .category-item { display: flex; min-height: 72px; gap: 17px; align-items: center; padding: 12px 18px; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(145deg, rgba(18, 27, 35, .95), rgba(9, 15, 21, .95)); color: var(--tone); text-decoration: none; transition: border-color .2s ease, transform .2s ease; }
+  .category-item:hover { border-color: var(--tone); transform: translateY(-3px); }
+  .category-item span { color: var(--text); }
+  .category-item strong, .category-item small { display: block; }
+  .category-item strong { font-size: 13px; font-weight: 600; }
+  .category-item small { margin-top: 5px; color: var(--muted); font-size: 12px; }
+  @media (max-width: 800px) { .category-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 430px) { .category-item { gap: 12px; padding-inline: 13px; } }
+</style>

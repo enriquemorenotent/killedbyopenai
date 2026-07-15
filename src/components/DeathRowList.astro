@@ -1,0 +1,53 @@
+---
+import { AudioWaveform, BrainCircuit, CalendarDays, ChevronRight, Compass } from '@lucide/astro';
+import type { ScheduledItem } from '../data/homeData';
+
+interface Props {
+  items: ScheduledItem[];
+}
+
+const { items } = Astro.props;
+const iconMap = { compass: Compass, brain: BrainCircuit, wave: AudioWaveform };
+---
+
+<div class="death-row-list">
+  {items.map((item) => {
+    const Icon = iconMap[item.icon];
+    return (
+      <article class:list={['death-row-item', `tone-${item.tone}`]}>
+        <div class="identity">
+          <span class="item-icon"><Icon size={27} stroke-width={1.6} /></span>
+          <div><h3>{item.name}</h3><p>{item.subtitle}</p></div>
+        </div>
+        <div class="date"><CalendarDays size={17} /><div><strong>{item.date}</strong><span>{item.event}</span></div></div>
+        <p class="note">{item.note}</p>
+        <span class="scheduled">Scheduled</span>
+        <ChevronRight class="chevron" size={18} aria-hidden="true" />
+      </article>
+    );
+  })}
+</div>
+
+<style>
+  .death-row-list { overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(145deg, rgba(17, 25, 33, .96), rgba(8, 14, 20, .96)); }
+  .death-row-item { display: grid; min-height: 67px; grid-template-columns: 1.4fr 1fr .95fr auto 20px; gap: 22px; align-items: center; padding: 8px 17px; border-bottom: 1px solid var(--line-soft); transition: background .2s ease; }
+  .death-row-item:last-child { border-bottom: 0; }
+  .death-row-item:hover { background: rgba(255, 255, 255, .025); }
+  .identity, .date { display: flex; gap: 13px; align-items: center; min-width: 0; }
+  .item-icon { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; border: 1px solid color-mix(in srgb, var(--tone) 55%, var(--line)); border-radius: 50%; background: color-mix(in srgb, var(--tone) 18%, #0c141b); color: var(--tone); }
+  h3, p { margin: 0; }
+  h3 { font-size: 14px; font-weight: 650; }
+  .identity p, .date span, .note { color: var(--muted); font-size: 11px; line-height: 1.4; }
+  .date strong, .date span { display: block; }
+  .date strong { margin-bottom: 2px; font-size: 12px; font-weight: 550; }
+  .scheduled { padding: 5px 9px; border: 1px solid var(--yellow); border-radius: 4px; color: var(--yellow); font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .chevron { color: var(--muted); }
+  @media (max-width: 800px) {
+    .death-row-item { grid-template-columns: 1fr auto; gap: 13px 16px; padding: 16px; }
+    .identity { grid-column: 1 / -1; }
+    .date { align-items: flex-start; }
+    .note { display: none; }
+    .scheduled { justify-self: end; }
+    .chevron { display: none; }
+  }
+</style>

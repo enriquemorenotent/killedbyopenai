@@ -1,0 +1,17 @@
+{
+  "name": "killed-by-openai",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@fontsource-variable/archivo": "^5.2.8",
+    "@lucide/astro": "^1.24.0",
+    "astro": "^5.7.0",
+    "typescript": "^5.7.0"
+  }
+}

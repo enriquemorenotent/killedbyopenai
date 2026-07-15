@@ -1,0 +1,132 @@
+---
+import { ArrowLeft, ArrowUpRight, CalendarDays, CircleDotDashed, Skull } from '@lucide/astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { withBase } from '../../utils/urls';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id.replace(/\.md$/, '') },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const statusLabel = project.data.status === 'rebranded' ? 'Absorbed' : project.data.status;
+const graveyardUrl = withBase('#graveyard');
+const heroImage = withBase('images/openai-tombstone-hero.png');
+---
+
+<BaseLayout title={`${project.data.name} — Killed by OpenAI`} description={project.data.summary}>
+  <SiteHeader active="graveyard" />
+
+  <main>
+    <section class="memorial-hero">
+      <div class="memorial-inner site-shell">
+        <div class="memorial-copy">
+          <a class="back-link" href={graveyardUrl}><ArrowLeft size={16} /> Back to the graveyard</a>
+          <div class="status-line"><Skull size={15} /><span>{statusLabel}</span><i></i><span>{project.data.category}</span></div>
+          <h1>{project.data.name}</h1>
+          <blockquote>“{project.data.epitaph}”</blockquote>
+        </div>
+        <div class="stone-crop" aria-hidden="true">
+          <img src={heroImage} alt="" width="1680" height="968" />
+        </div>
+      </div>
+    </section>
+
+    <section class="record site-shell" aria-labelledby="record-heading">
+      <article class="obituary">
+        <p class="eyebrow">Official cemetery record</p>
+        <h2 id="record-heading">What happened</h2>
+        <p class="lead">{project.data.summary}</p>
+        <div class="body-copy"><Content /></div>
+        {project.data.officialUrl && (
+          <a class="source-link" href={project.data.officialUrl} target="_blank" rel="noreferrer">
+            Read the official paperwork <ArrowUpRight size={16} />
+          </a>
+        )}
+      </article>
+
+      <aside class="case-file" aria-label="Cemetery record details">
+        <header><CircleDotDashed size={20} /><span>Case file</span><strong>Closed</strong></header>
+        <dl>
+          <div>
+            <dt><CalendarDays size={14} /> Time among us</dt>
+            <dd>{project.data.launched ?? 'Unknown'} — {project.data.retired}</dd>
+          </div>
+          <div>
+            <dt>Cause of death</dt>
+            <dd>{project.data.cause}</dd>
+          </div>
+          {project.data.replacement && (
+            <div>
+              <dt>Next of kin</dt>
+              <dd>{project.data.replacement}</dd>
+            </div>
+          )}
+          <div>
+            <dt>Filed under</dt>
+            <dd class="tag-list">{project.data.tags.map((tag: string) => <span>{tag}</span>)}</dd>
+          </div>
+        </dl>
+      </aside>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .memorial-hero { overflow: hidden; border-bottom: 1px solid var(--line-soft); background: #060b10; }
+  .memorial-inner { position: relative; display: grid; min-height: 420px; grid-template-columns: 1fr 1.05fr; align-items: center; }
+  .memorial-copy { position: relative; z-index: 2; max-width: 540px; padding: 58px 0 64px; }
+  .back-link { display: inline-flex; gap: 8px; align-items: center; margin-bottom: 50px; color: var(--muted); font-size: 12px; text-decoration: none; }
+  .back-link:hover { color: var(--green); }
+  .status-line { display: flex; gap: 9px; align-items: center; margin-bottom: 14px; color: var(--red); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .status-line i { width: 3px; height: 3px; border-radius: 50%; background: #6f7880; }
+  .status-line span:last-child { color: var(--muted); }
+  h1 { max-width: 570px; margin: 0; font-size: clamp(48px, 6vw, 78px); font-weight: 680; line-height: .98; letter-spacing: -.055em; }
+  blockquote { max-width: 510px; margin: 20px 0 0; color: #b8c0c7; font-size: 18px; line-height: 1.45; }
+
+  .stone-crop { position: absolute; z-index: 0; top: 0; right: -90px; bottom: 0; width: 70%; }
+  .stone-crop::after { position: absolute; inset: 0; background: linear-gradient(90deg, #060b10 0%, rgba(6, 11, 16, .83) 20%, transparent 55%, #060b10 100%); content: ''; }
+  .stone-crop img { width: 100%; height: 100%; object-fit: cover; object-position: 58% 52%; opacity: .82; }
+
+  .record { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(290px, .75fr); gap: clamp(55px, 8vw, 105px); padding-block: 70px 78px; }
+  .eyebrow { margin: 0 0 12px; color: var(--green); font-size: 10px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+  h2 { margin: 0 0 26px; font-size: clamp(30px, 4vw, 45px); font-weight: 650; letter-spacing: -.04em; }
+  .lead { margin: 0 0 24px; color: var(--text); font-size: 20px; line-height: 1.55; }
+  .body-copy { color: var(--muted); font-size: 15px; line-height: 1.75; }
+  .body-copy :global(p) { margin: 0 0 1.35em; }
+  .body-copy :global(code) { padding: 2px 5px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: #d7e0e6; }
+  .source-link { display: inline-flex; gap: 7px; align-items: center; margin-top: 22px; padding-bottom: 4px; border-bottom: 1px solid var(--green); color: var(--green); font-size: 12px; font-weight: 650; text-decoration: none; }
+
+  .case-file { align-self: start; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: linear-gradient(150deg, #121b23, #080e14); }
+  .case-file header { display: flex; gap: 9px; align-items: center; padding: 17px 18px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .case-file header strong { margin-left: auto; padding: 4px 7px; border: 1px solid var(--red); border-radius: 4px; color: var(--red); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; }
+  dl { margin: 0; padding: 0 18px 8px; }
+  dl > div { padding: 17px 0; border-bottom: 1px solid var(--line-soft); }
+  dl > div:last-child { border-bottom: 0; }
+  dt { display: flex; gap: 7px; align-items: center; margin-bottom: 7px; color: var(--muted); font-size: 9px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+  dd { margin: 0; font-size: 13px; line-height: 1.5; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag-list span { padding: 4px 7px; border: 1px solid var(--line); border-radius: 4px; color: #c4ccd2; font-size: 10px; }
+
+  @media (max-width: 760px) {
+    .memorial-inner { min-height: 500px; grid-template-columns: 1fr; align-items: end; }
+    .stone-crop { top: 0; right: -100px; bottom: auto; width: calc(100% + 150px); height: 350px; }
+    .stone-crop::after { background: linear-gradient(180deg, transparent 0%, rgba(6, 11, 16, .2) 45%, #060b10 100%); }
+    .stone-crop img { object-position: 55% 45%; }
+    .memorial-copy { padding: 28px 0 42px; }
+    .back-link { position: absolute; bottom: 100%; margin-bottom: 290px; }
+    h1 { font-size: clamp(45px, 13vw, 67px); }
+    blockquote { font-size: 15px; }
+    .record { grid-template-columns: 1fr; gap: 45px; padding-block: 55px 65px; }
+    .lead { font-size: 18px; }
+  }
+</style>

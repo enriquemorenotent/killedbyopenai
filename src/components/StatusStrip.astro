@@ -1,0 +1,44 @@
+---
+import { CalendarDays, Clock3, Undo2 } from '@lucide/astro';
+import type { StatusMetric } from '../data/homeData';
+import TombstoneIcon from './TombstoneIcon.astro';
+
+interface Props {
+  metrics: StatusMetric[];
+}
+
+const { metrics } = Astro.props;
+const iconMap = { skull: TombstoneIcon, calendar: CalendarDays, clock: Clock3, undo: Undo2 };
+---
+
+<section class="status-strip" aria-label="Cemetery statistics">
+  {metrics.map((metric) => {
+    const Icon = iconMap[metric.icon];
+    return (
+      <div class:list={['metric', `tone-${metric.tone}`]}>
+        <div class="metric-top"><Icon size={26} stroke-width={1.7} /><strong>{metric.value}</strong></div>
+        <h2>{metric.label}</h2>
+        <p>{metric.note}</p>
+      </div>
+    );
+  })}
+</section>
+
+<style>
+  .status-strip { display: grid; grid-template-columns: repeat(4, 1fr); padding: 18px 12px; border: 1px solid var(--line); border-radius: 10px; background: linear-gradient(145deg, rgba(17, 25, 33, .96), rgba(9, 15, 21, .94)); box-shadow: 0 16px 45px rgba(0, 0, 0, .16); }
+  .metric { min-width: 0; padding: 4px 28px; border-right: 1px solid var(--line-soft); text-align: center; }
+  .metric:last-child { border-right: 0; }
+  .metric-top { display: flex; min-height: 38px; gap: 15px; align-items: center; justify-content: center; color: var(--text); }
+  .metric-top strong { color: var(--tone); font-size: 30px; font-weight: 750; line-height: 1; }
+  .metric h2 { margin: 7px 0 5px; font-size: 14px; font-weight: 650; }
+  .metric p { margin: 0; color: var(--muted); font-size: 12px; }
+  @media (max-width: 700px) {
+    .status-strip { grid-template-columns: repeat(2, 1fr); padding: 6px; }
+    .metric { padding: 18px 8px; }
+    .metric:nth-child(2) { border-right: 0; }
+    .metric:nth-child(-n + 2) { border-bottom: 1px solid var(--line-soft); }
+    .metric-top strong { font-size: 25px; }
+    .metric h2 { font-size: 12px; }
+    .metric p { font-size: 10px; }
+  }
+</style>

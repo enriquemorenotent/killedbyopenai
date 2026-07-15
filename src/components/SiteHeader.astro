@@ -1,0 +1,107 @@
+---
+import { Menu, Search, X } from '@lucide/astro';
+import { withBase } from '../utils/urls';
+import TombstoneIcon from './TombstoneIcon.astro';
+
+interface Props {
+  active?: 'home' | 'graveyard' | 'death-row' | 'timeline' | 'models' | 'about';
+}
+
+const { active = 'home' } = Astro.props;
+const links = [
+  { key: 'home', label: 'Home', href: withBase() },
+  { key: 'graveyard', label: 'Graveyard', href: withBase('#graveyard') },
+  { key: 'death-row', label: 'Death Row', href: withBase('#death-row') },
+  { key: 'timeline', label: 'Timeline', href: withBase('#death-row') },
+  { key: 'models', label: 'Model Cemetery', href: withBase('#categories') },
+  { key: 'about', label: 'About', href: withBase('#about') },
+] as const;
+const graveyardUrl = withBase('#graveyard');
+---
+
+<header class="site-header" data-site-header>
+  <div class="header-inner site-shell">
+    <a class="brand" href={withBase()} aria-label="Killed by OpenAI home">
+      <span class="brand-mark"><TombstoneIcon size={21} stroke-width={1.45} /></span>
+      <strong>Killed by OpenAI</strong>
+    </a>
+
+    <nav class="site-nav" id="site-navigation" aria-label="Primary navigation" data-site-menu>
+      {links.map((link) => (
+        <a class:list={{ active: active === link.key }} href={link.href}>{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="header-actions">
+      <a class="search-link" href={graveyardUrl} aria-label="Search the graveyard">
+        <Search size={19} stroke-width={1.8} />
+      </a>
+      <a class="tip-button" href="mailto:?subject=Killed%20by%20OpenAI%20tip">Submit a tip</a>
+    </div>
+
+    <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="site-navigation" aria-expanded="false" data-menu-toggle>
+      <Menu class="menu-icon" size={22} />
+      <X class="close-icon" size={22} />
+    </button>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const toggle = header?.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = header?.querySelector<HTMLElement>('[data-site-menu]');
+
+  const setMenuOpen = (isOpen: boolean) => {
+    header?.classList.toggle('menu-open', isOpen);
+    toggle?.setAttribute('aria-expanded', String(isOpen));
+  };
+
+  toggle?.addEventListener('click', () => {
+    setMenuOpen(!header?.classList.contains('menu-open'));
+  });
+
+  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMenuOpen(false);
+  });
+</script>
+
+<style>
+  .site-header { position: sticky; z-index: 50; top: 0; border-bottom: 1px solid var(--line-soft); background: rgba(5, 10, 15, .92); backdrop-filter: blur(18px); }
+  .header-inner { display: grid; width: min(1180px, calc(100% - 72px)); height: 68px; grid-template-columns: auto 1fr auto; gap: 34px; align-items: center; }
+  .brand { display: flex; gap: 12px; align-items: center; text-decoration: none; white-space: nowrap; }
+  .brand strong { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+  .brand-mark { display: grid; width: 34px; height: 39px; place-items: center; border: 1px solid #59646d; border-radius: 16px 16px 5px 5px; background: linear-gradient(155deg, #d8dde0, #7d868e); color: #071016; box-shadow: inset 0 0 0 3px rgba(4, 10, 14, .18); }
+  .site-nav { display: flex; justify-content: center; gap: clamp(18px, 2.3vw, 31px); }
+  .site-nav a { position: relative; padding: 25px 0 23px; color: var(--muted); font-size: 13px; font-weight: 550; text-decoration: none; white-space: nowrap; transition: color .2s ease; }
+  .site-nav a::after { position: absolute; right: 0; bottom: 15px; left: 0; height: 2px; background: var(--green); content: ''; transform: scaleX(0); transition: transform .2s ease; }
+  .site-nav a:hover, .site-nav a.active { color: var(--text); }
+  .site-nav a.active { color: var(--green); }
+  .site-nav a.active::after { transform: scaleX(1); }
+  .header-actions { display: flex; gap: 16px; align-items: center; }
+  .search-link { display: grid; width: 34px; height: 34px; place-items: center; color: var(--text); text-decoration: none; }
+  .tip-button { padding: 10px 15px; border: 1px solid var(--green-deep); border-radius: 7px; color: var(--green); font-size: 13px; font-weight: 650; text-decoration: none; transition: background .2s ease, color .2s ease; }
+  .tip-button:hover { background: var(--green); color: #04100a; }
+  .menu-toggle { display: none; border: 0; background: transparent; color: var(--text); cursor: pointer; }
+  .close-icon { display: none; }
+  @media (max-width: 1040px) {
+    .header-inner { gap: 22px; }
+    .site-nav { gap: 17px; }
+    .site-nav a { font-size: 12px; }
+  }
+  @media (max-width: 860px) {
+    .header-inner { display: flex; width: calc(100% - 30px); height: 62px; justify-content: space-between; }
+    .brand strong { font-size: 16px; }
+    .brand-mark { width: 29px; height: 34px; }
+    .site-nav { position: absolute; top: 100%; right: 0; left: 0; display: none; flex-direction: column; gap: 0; padding: 12px 20px 22px; border-bottom: 1px solid var(--line); background: #080e14; }
+    .site-nav a { padding: 13px 0; border-bottom: 1px solid var(--line-soft); }
+    .site-nav a::after { display: none; }
+    .header-actions { margin-left: auto; }
+    .search-link { display: none; }
+    .tip-button { padding: 8px 11px; font-size: 11px; }
+    .menu-toggle { display: grid; width: 36px; height: 36px; place-items: center; padding: 0; }
+    .menu-open .site-nav { display: flex; }
+    .menu-open .menu-icon { display: none; }
+    .menu-open .close-icon { display: block; }
+  }
+</style>

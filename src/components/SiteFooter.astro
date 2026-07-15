@@ -1,0 +1,62 @@
+---
+import { CodeXml, Heart, Mail, MessageCircle } from '@lucide/astro';
+import { withBase } from '../utils/urls';
+import TombstoneIcon from './TombstoneIcon.astro';
+---
+
+<footer class="site-footer" id="about">
+  <div class="footer-grid site-shell">
+    <section class="footer-brand">
+      <h2><span><TombstoneIcon size={18} stroke-width={1.45} /></span>Killed by OpenAI</h2>
+      <p>A memorial to the products, features, and models that OpenAI has killed, retired, or replaced.</p>
+      <div class="socials">
+        <a href="mailto:?subject=Killed%20by%20OpenAI" aria-label="Email"><Mail size={18} /></a>
+        <a href="https://github.com" aria-label="GitHub"><CodeXml size={18} /></a>
+        <a href="mailto:?subject=Killed%20by%20OpenAI%20feedback" aria-label="Feedback"><MessageCircle size={18} /></a>
+      </div>
+    </section>
+
+    <nav aria-label="Footer navigation">
+      <h3>Explore</h3>
+      <a href={withBase('#graveyard')}>Graveyard</a>
+      <a href={withBase('#death-row')}>Death Row</a>
+      <a href={withBase('#categories')}>Model Cemetery</a>
+      <a href={withBase('#death-row')}>Timeline</a>
+      <a href={withBase('#about')}>About</a>
+    </nav>
+
+    <section class="disclaimer">
+      <h3>Disclaimer</h3>
+      <p>This site is not affiliated with OpenAI. Information is compiled from public announcements and may not be 100% accurate.</p>
+    </section>
+
+    <section class="memory-card">
+      <h3><Heart size={20} /> Keep the memory alive</h3>
+      <p>Spotted something we missed? Submit a tip and help keep the graveyard up to date.</p>
+      <a href="mailto:?subject=Killed%20by%20OpenAI%20tip">Submit a tip</a>
+    </section>
+  </div>
+  <div class="copyright site-shell">© 2026 Killed by OpenAI. All rights reserved.</div>
+</footer>
+
+<style>
+  .site-footer { margin-top: 24px; border-top: 1px solid var(--line-soft); background: #05090d; }
+  .footer-grid { display: grid; grid-template-columns: 1.15fr .72fr 1.03fr 1.05fr; gap: 30px; padding-block: 30px 0; }
+  h2, h3, p { margin-top: 0; }
+  h2 { display: flex; gap: 11px; align-items: center; margin-bottom: 14px; font-size: 18px; }
+  h2 span { display: grid; width: 26px; height: 31px; place-items: center; border-radius: 12px 12px 4px 4px; background: #b8c0c5; color: #081015; }
+  h3 { margin-bottom: 14px; font-size: 14px; font-weight: 600; }
+  p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+  .footer-brand p { max-width: 230px; }
+  .socials { display: flex; gap: 17px; margin-top: 22px; }
+  .socials a { color: var(--muted); transition: color .2s ease; }
+  .socials a:hover { color: var(--green); }
+  nav a { display: block; margin-bottom: 8px; color: var(--muted); font-size: 12px; text-decoration: none; }
+  nav a:hover { color: var(--green); }
+  .memory-card { padding: 15px 17px; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(145deg, #101820, #091016); }
+  .memory-card h3 { display: flex; gap: 9px; align-items: center; }
+  .memory-card a { display: inline-block; padding: 8px 13px; border-radius: 5px; background: var(--green); color: #04100a; font-size: 11px; font-weight: 700; text-decoration: none; }
+  .copyright { padding-block: 15px; border-top: 1px solid var(--line-soft); color: #747e86; font-size: 10px; text-align: center; }
+  @media (max-width: 800px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .footer-grid { grid-template-columns: 1fr; gap: 28px; } }
+</style>

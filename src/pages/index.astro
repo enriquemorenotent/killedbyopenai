@@ -1,0 +1,246 @@
+---
+import { ArrowRight, CalendarDays, FolderOpen } from '@lucide/astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryGrid from '../components/CategoryGrid.astro';
+import DeathRowList from '../components/DeathRowList.astro';
+import MemorialCard from '../components/MemorialCard.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import StatusStrip from '../components/StatusStrip.astro';
+import TombstoneIcon from '../components/TombstoneIcon.astro';
+import { categories, recentMemorials, scheduledMemorials, statusMetrics } from '../data/homeData';
+import { withBase } from '../utils/urls';
+
+const heroImage = withBase('images/openai-tombstone-hero.png');
+---
+
+<BaseLayout>
+  <SiteHeader active="home" />
+
+  <main>
+    <section class="hero site-shell" aria-labelledby="hero-title">
+      <img
+        class="hero-art"
+        src={heroImage}
+        alt="A weathered OpenAI tombstone surrounded by weeds at night"
+        width="1680"
+        height="968"
+        fetchpriority="high"
+      />
+      <div class="hero-copy">
+        <h1 id="hero-title">
+          <span class="opening-line">Remembering the</span>
+          <span class="product-line">products OpenAI</span>
+          <span class="final-line"><em>killed</em>.</span>
+        </h1>
+        <p>OpenAI ships fast. Sometimes too fast.<br />Here lie the products, features, and APIs that<br />didn’t make it.</p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#graveyard"><TombstoneIcon size={17} /> Browse the graveyard</a>
+          <a class="secondary-action" href="#death-row"><CalendarDays size={17} /> View death row</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="site-shell status-wrap">
+      <StatusStrip metrics={statusMetrics} />
+    </div>
+
+    <section class="content-section site-shell" id="graveyard" aria-labelledby="recent-heading">
+      <header class="section-heading">
+        <h2 id="recent-heading"><TombstoneIcon size={21} /> Recently Deceased</h2>
+        <a href="#graveyard">View all killed products <ArrowRight size={16} /></a>
+      </header>
+      <div class="memorial-grid">
+        {recentMemorials.map((item) => <MemorialCard item={item} />)}
+      </div>
+    </section>
+
+    <section class="content-section site-shell death-row-section" id="death-row" aria-labelledby="death-row-heading">
+      <header class="section-heading tone-yellow">
+        <h2 id="death-row-heading"><CalendarDays size={21} /> On Death Row</h2>
+        <a href="#death-row">View all scheduled <ArrowRight size={16} /></a>
+      </header>
+      <DeathRowList items={scheduledMemorials} />
+    </section>
+
+    <section class="content-section categories-section site-shell" id="categories" aria-labelledby="categories-heading">
+      <header class="section-heading">
+        <h2 id="categories-heading"><FolderOpen size={21} /> Browse by Category</h2>
+      </header>
+      <CategoryGrid items={categories} />
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 340px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(90deg, var(--bg) 0%, rgba(5, 10, 15, .96) 29%, rgba(5, 10, 15, .16) 65%, var(--bg) 100%);
+    content: '';
+    pointer-events: none;
+  }
+
+  .hero-art {
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 64%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 53% 51%;
+    opacity: .96;
+    animation: stone-arrival .9s cubic-bezier(.2, .7, .2, 1) both;
+  }
+
+  .hero-copy {
+    width: 47%;
+    padding: 45px 0 35px 12px;
+    animation: copy-arrival .7s .08s ease-out both;
+  }
+
+  h1 {
+    margin: 0;
+    font-weight: 660;
+    letter-spacing: -.045em;
+  }
+
+  h1 span { display: block; }
+  .opening-line { margin-bottom: 12px; font-size: clamp(25px, 2.7vw, 32px); line-height: 1.05; }
+  .product-line, .final-line { font-size: clamp(39px, 4.5vw, 52px); line-height: .96; }
+  h1 em { color: var(--green); font-style: normal; }
+
+  .hero-copy > p {
+    margin: 20px 0 24px;
+    color: #aeb7bf;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .hero-actions { display: flex; gap: 10px; }
+  .hero-actions a {
+    display: inline-flex;
+    min-height: 41px;
+    gap: 9px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 650;
+    text-decoration: none;
+    transition: transform .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .hero-actions a:hover { transform: translateY(-2px); }
+  .primary-action { background: linear-gradient(120deg, #58e493, #45ca7c); color: #04110a; }
+  .secondary-action { border: 1px solid var(--line); background: rgba(17, 25, 33, .9); color: var(--text); }
+  .secondary-action:hover { border-color: #52606d; }
+
+  .status-wrap { position: relative; z-index: 3; margin-top: -3px; }
+  .content-section { margin-top: 28px; scroll-margin-top: 88px; }
+  .death-row-section { margin-top: 30px; }
+  .categories-section { margin-top: 24px; margin-bottom: 18px; }
+
+  .section-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 13px;
+  }
+
+  .section-heading h2 {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -.02em;
+  }
+
+  .section-heading h2 :global(svg) { color: var(--tone, var(--text)); }
+  .section-heading a {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    color: var(--tone, var(--green));
+    font-size: 12px;
+    font-weight: 550;
+    text-decoration: none;
+  }
+  .section-heading a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  .memorial-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  @keyframes copy-arrival {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes stone-arrival {
+    from { opacity: 0; transform: scale(1.025); }
+    to { opacity: .96; transform: scale(1); }
+  }
+
+  @media (max-width: 980px) {
+    .hero-copy { width: 49%; padding-left: 0; }
+    .hero-art { width: 66%; object-position: 57% 51%; }
+    .memorial-grid { gap: 12px; }
+  }
+
+  @media (max-width: 800px) {
+    .hero { min-height: 600px; }
+    .hero::after { background: linear-gradient(180deg, rgba(5, 10, 15, .14), rgba(5, 10, 15, .74) 50%, var(--bg) 78%); }
+    .hero-art { inset: -20px -80px auto -80px; width: calc(100% + 160px); height: 420px; object-position: 57% 45%; }
+    .hero-copy { position: absolute; right: 0; bottom: 19px; left: 0; width: auto; padding: 0; text-align: center; }
+    .opening-line { font-size: clamp(24px, 5vw, 31px); }
+    .product-line, .final-line { font-size: clamp(39px, 8vw, 58px); }
+    .hero-copy > p { margin-inline: auto; }
+    .hero-actions { justify-content: center; }
+    .memorial-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .hero { min-height: 540px; }
+    .hero-art { height: 360px; }
+    .hero-copy { bottom: 17px; }
+    .opening-line { font-size: clamp(23px, 7vw, 28px); }
+    .product-line, .final-line { font-size: clamp(36px, 11vw, 48px); }
+    .hero-copy > p { max-width: 360px; margin-block: 16px 20px; font-size: 12px; }
+    .hero-copy > p br { display: none; }
+    .hero-actions a { min-height: 39px; padding-inline: 13px; font-size: 11px; }
+    .status-wrap { margin-top: 8px; }
+    .content-section { margin-top: 30px; }
+    .section-heading h2 { font-size: 16px; }
+    .section-heading a { font-size: 10px; }
+    .memorial-grid {
+      width: calc(100vw - 15px);
+      grid-auto-columns: minmax(245px, 75vw);
+      grid-auto-flow: column;
+      grid-template-columns: none;
+      gap: 11px;
+      overflow-x: auto;
+      padding: 0 15px 8px 0;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .memorial-grid::-webkit-scrollbar { display: none; }
+  }
+
+  @media (max-width: 390px) {
+    .hero-actions { flex-direction: column; padding-inline: 28px; }
+  }
+</style>
